@@ -1,0 +1,1241 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Embedding multiple networks &#8212; Network Data Science</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script async="async" kind="hypothesis" src="https://hypothes.is/embed.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="shortcut icon" href="_static/logo.png"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Ranking and flow" href="ranking.html" />
+    <link rel="prev" title="Graph matching" href="graph_matching.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en">
+    
+
+    <!-- Google Analytics -->
+    
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-JYHFQNEPZN"></script>
+<script>
+                    window.dataLayer = window.dataLayer || [];
+                    function gtag(){ dataLayer.push(arguments); }
+                    gtag('js', new Date());
+                    gtag('config', 'G-JYHFQNEPZN');
+                </script>
+
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="_static/logo.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Network Data Science</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="landing.html">
+                    Welcome
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Course logistics
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="syllabus.html">
+   Syllabus
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="calendar.html">
+   Calendar
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="mini_assignment.html">
+   Mini-assignment
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="final_project.html">
+   Final project
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Resources
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="online_resources.html">
+   Online
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="books.html">
+   Books
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="datasets.html">
+   Datasets
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Lectures
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference external" href="https://bdpedigo.github.io/networks-course/welcome.html">
+   Welcome
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference external" href="https://bdpedigo.github.io/networks-course/what_are_networks.html">
+   What are networks?
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="representing_networks.html">
+   Representing networks
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="plotting_networks.html">
+   Plotting networks
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="connected_components.html">
+   Connected components
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="centrality.html">
+   Centrality measures
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="random_graphs.html">
+   Random network models
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="community_detection.html">
+   Community detection
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="embedding.html">
+   Network embedding
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="graph_matching.html">
+   Graph matching
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Embedding multiple networks
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ranking.html">
+   Ranking and flow
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/bdpedigo/networks-course/main?urlpath=tree/docs/multiple_embedding.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-repository-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Source repositories">
+      <i class="fab fa-github"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://github.com/bdpedigo/networks-course"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Source repository"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="headerbtn__text-container">repository</span>
+</a>
+
+      </li>
+      
+      <li>
+        <a href="https://github.com/bdpedigo/networks-course/issues/new?title=Issue%20on%20page%20%2Fmultiple_embedding.html&body=Your%20issue%20content%20here."
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Open an issue"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="headerbtn__text-container">open issue</span>
+</a>
+
+      </li>
+      
+      <li>
+        <a href="https://github.com/bdpedigo/networks-course/edit/main/docs/multiple_embedding.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Edit this page"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="headerbtn__text-container">suggest edit</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="_sources/multiple_embedding.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#do-a-couple-of-spectral-embeddings">
+   Do a couple of spectral embeddings
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#orthogonal-nonidentifiability">
+     Orthogonal nonidentifiability
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#orthogonal-procrustes-problem">
+     Orthogonal procrustes problem
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#considerations">
+     Considerations
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#omnibus-embedding">
+   Omnibus Embedding
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#multiple-ase">
+   Multiple ASE
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#representations-for-each-network">
+   Representations for each network
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#references">
+   References
+  </a>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Embedding multiple networks</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#do-a-couple-of-spectral-embeddings">
+   Do a couple of spectral embeddings
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#orthogonal-nonidentifiability">
+     Orthogonal nonidentifiability
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#orthogonal-procrustes-problem">
+     Orthogonal procrustes problem
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#considerations">
+     Considerations
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#omnibus-embedding">
+   Omnibus Embedding
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#multiple-ase">
+   Multiple ASE
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#representations-for-each-network">
+   Representations for each network
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#references">
+   References
+  </a>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section class="tex2jax_ignore mathjax_ignore" id="embedding-multiple-networks">
+<h1>Embedding multiple networks<a class="headerlink" href="#embedding-multiple-networks" title="Permalink to this headline">#</a></h1>
+<p>Often, we are interested in more than one network. Sometimes this arises from thinking
+about multiple “layers,” where each layer represents a different kind of relationship.</p>
+<figure class="align-default" id="id75">
+<img alt="_images/stacked-adj.png" src="_images/stacked-adj.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 21 </span><span class="caption-text">Example of a multiple-layered network (multigraph) from the <em>Drosophila</em> larva brain
+connectome.</span><a class="headerlink" href="#id75" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+<p>Or, we may have networks which arise from the same process, but at different timepoints.</p>
+<p>Regardless of the data, it is common to want to:</p>
+<ul class="simple">
+<li><p>Compare the role/structure of each node across networks, or</p></li>
+<li><p>Generate a single embedding which summarizes the property of each node, regardless
+of which network it came from, or</p></li>
+<li><p>Quantitatively compare the networks themselves</p></li>
+</ul>
+<p>Each of these tasks (and many others) can benefit from doing network embeddings which
+somehow deal with multiple networks. We’ll discuss a few approaches and considerations
+below, mainly for the spectral methods.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Many other approaches for doing multiple network embeddings exist, including for some of the
+neural network approaches.</p>
+</div>
+<section id="do-a-couple-of-spectral-embeddings">
+<h2>Do a couple of spectral embeddings<a class="headerlink" href="#do-a-couple-of-spectral-embeddings" title="Permalink to this headline">#</a></h2>
+<p>Let’s say we have two networks. We wish to come up with an embedding for <em>each node
+in each network</em>. Since we’ve already learned about techniques for network embedding,
+why not just apply these techniques separately to each network, and compare the results?</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">graspologic.utils</span> <span class="kn">import</span> <span class="n">symmetrize</span>
+
+
+<span class="n">DATA_PATH</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;networks-course/data&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">load_matched</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">):</span>
+    <span class="n">side</span> <span class="o">=</span> <span class="n">side</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="nb">dir</span> <span class="o">=</span> <span class="n">DATA_PATH</span> <span class="o">/</span> <span class="s2">&quot;processed_maggot&quot;</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">read_edgelist</span><span class="p">(</span>
+        <span class="nb">dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;matched_</span><span class="si">{</span><span class="n">side</span><span class="si">}</span><span class="s2">_edgelist.csv&quot;</span><span class="p">,</span>
+        <span class="n">create_using</span><span class="o">=</span><span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">,</span>
+        <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span>
+        <span class="n">nodetype</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">nodes</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="nb">dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;matched_</span><span class="si">{</span><span class="n">side</span><span class="si">}</span><span class="s2">_nodes.csv&quot;</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">adj</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">to_numpy_array</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">nodelist</span><span class="o">=</span><span class="n">nodes</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">adj</span><span class="p">,</span> <span class="n">nodes</span>
+
+
+<span class="n">left_adj</span><span class="p">,</span> <span class="n">left_nodes</span> <span class="o">=</span> <span class="n">load_matched</span><span class="p">(</span><span class="s2">&quot;left&quot;</span><span class="p">)</span>
+<span class="n">right_adj</span><span class="p">,</span> <span class="n">right_nodes</span> <span class="o">=</span> <span class="n">load_matched</span><span class="p">(</span><span class="s2">&quot;right&quot;</span><span class="p">)</span>
+<span class="n">left_adj</span> <span class="o">=</span> <span class="n">symmetrize</span><span class="p">(</span><span class="n">left_adj</span><span class="p">)</span>
+<span class="n">right_adj</span> <span class="o">=</span> <span class="n">symmetrize</span><span class="p">(</span><span class="n">right_adj</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">graspologic.embed</span> <span class="kn">import</span> <span class="n">AdjacencySpectralEmbed</span>
+
+<span class="n">ase</span> <span class="o">=</span> <span class="n">AdjacencySpectralEmbed</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+<span class="n">X_left</span> <span class="o">=</span> <span class="n">ase</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">left_adj</span><span class="p">)</span>
+<span class="n">X_right</span> <span class="o">=</span> <span class="n">ase</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">right_adj</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">graspologic.plot</span> <span class="kn">import</span> <span class="n">pairplot</span>
+
+<span class="n">X_both</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">X_left</span><span class="p">,</span> <span class="n">X_right</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X_left</span><span class="p">)</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;Left&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">X_right</span><span class="p">)</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;Right&quot;</span><span class="p">])</span>
+
+<span class="n">pairplot</span><span class="p">(</span><span class="n">X_both</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">4</span><span class="p">],</span> <span class="n">labels</span><span class="p">,</span> <span class="n">legend_name</span><span class="o">=</span><span class="s2">&quot;Side&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Latent position estimates&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;seaborn.axisgrid.PairGrid at 0x12e684c10&gt;
+</pre></div>
+</div>
+<img alt="_images/multiple_embedding_5_1.png" src="_images/multiple_embedding_5_1.png" />
+</div>
+</div>
+<div class="tip admonition">
+<p class="admonition-title">Question</p>
+<p>Based on this plot, would you say that these networks are similar? Why or why not?</p>
+<p>Do you notice anything about the relationship of one embedding with regard to the
+other?</p>
+</div>
+<section id="orthogonal-nonidentifiability">
+<h3>Orthogonal nonidentifiability<a class="headerlink" href="#orthogonal-nonidentifiability" title="Permalink to this headline">#</a></h3>
+<p>Earlier in the course, we discussed a model with a nonidentifiability in its parameters.
+As a reminder, this just means that we have some flexibility in the parameters we use
+which gives us the same model behavior. Can this arise for the RDPG model, which is the
+motivation behind doing ASE? Let’s have a look.</p>
+<p>Remember that for the RDPG, we are using the model of <span class="math notranslate nohighlight">\(A\)</span> being sampled from a
+probability matrix, <span class="math notranslate nohighlight">\(P\)</span>. <span class="math notranslate nohighlight">\(P\)</span> has the structure</p>
+<div class="math notranslate nohighlight">
+\[P = XX^T\]</div>
+<p>for an undirected network, or for a directed network,</p>
+<div class="math notranslate nohighlight">
+\[P = XY^T\]</div>
+<p>How can a nonidentifiability pop up here? Note that an <a class="reference external" href="https://en.wikipedia.org/wiki/Orthogonal_matrix"><strong>orthogonal matrix</strong></a> <span class="math notranslate nohighlight">\(W\)</span> is one
+such that</p>
+<div class="math notranslate nohighlight">
+\[W W^T = W^T W = I\]</div>
+<p>Intuitively, these orthogonal matrices represent <em>rotations</em> and <em>reflections</em> in our
+<span class="math notranslate nohighlight">\(d\)</span>-dimensional space. They are often called <strong>isometric</strong> transformations of the space,
+because they <em>preserve all interpoint distances</em>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+
+<span class="n">sns</span><span class="o">.</span><span class="n">set_context</span><span class="p">(</span><span class="s2">&quot;talk&quot;</span><span class="p">)</span>
+
+<span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">]])</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+<span class="n">ax</span> <span class="o">=</span> <span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">X</span><span class="p">:</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Original positions ($X$)&quot;</span><span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">ortho_group</span>
+
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">888</span><span class="p">)</span>
+<span class="n">W</span> <span class="o">=</span> <span class="n">ortho_group</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">Z</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">W</span>
+
+<span class="n">ax</span> <span class="o">=</span> <span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">Z</span><span class="p">:</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Transformed positions ($X W$)&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 1.0, &#39;Transformed positions ($X W$)&#39;)
+</pre></div>
+</div>
+<img alt="_images/multiple_embedding_8_1.png" src="_images/multiple_embedding_8_1.png" />
+</div>
+</div>
+<p>Note that the distances between all points is preserved.</p>
+<div class="tip admonition">
+<p class="admonition-title">Question</p>
+<p>Can you think of another set of latent positions, say <span class="math notranslate nohighlight">\(Z\)</span>, such that or probability
+matrix <span class="math notranslate nohighlight">\(P = XX^T = ZZ^T\)</span>, but <span class="math notranslate nohighlight">\(Z \neq X\)</span>?</p>
+<p>Hint: where can you insert some orthogonal matrices into the formula <span class="math notranslate nohighlight">\(P = XX^T\)</span> such
+that the matrix <span class="math notranslate nohighlight">\(P\)</span> is unchanged?</p>
+</div>
+<p>Note what this means for our embeddings:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">W</span> <span class="o">=</span> <span class="n">ortho_group</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">X_left</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">X_left_new</span> <span class="o">=</span> <span class="n">X_left</span> <span class="o">@</span> <span class="n">W</span>
+<span class="n">P1</span> <span class="o">=</span> <span class="n">X_left</span> <span class="o">@</span> <span class="n">X_left</span><span class="o">.</span><span class="n">T</span>
+<span class="n">P2</span> <span class="o">=</span> <span class="n">X_left_new</span> <span class="o">@</span> <span class="n">X_left_new</span><span class="o">.</span><span class="n">T</span>
+
+<span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">P1</span><span class="p">,</span> <span class="n">P2</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>True
+</pre></div>
+</div>
+</div>
+</div>
+<p>We have just found two sets of latent positions which are equally valid - but note that
+there are an <em>infinite</em> number of orthogonal transformations.</p>
+</section>
+<section id="orthogonal-procrustes-problem">
+<h3>Orthogonal procrustes problem<a class="headerlink" href="#orthogonal-procrustes-problem" title="Permalink to this headline">#</a></h3>
+<p>In practice, how can we resolve this issue? Let’s say we have these two sets of latent
+positions, <span class="math notranslate nohighlight">\(X^{(1)}\)</span> and <span class="math notranslate nohighlight">\(X^{(2)} W\)</span>, and want to somehow compare them on equal footing.
+What we can do is try to
+uncover a orthogonal transformation of one set of latent positions with regard to the
+other, e.g.</p>
+<div class="math notranslate nohighlight">
+\[X^{(1)} \text{ vs. } X^{(2)} W\]</div>
+<p>for some <span class="math notranslate nohighlight">\(W\)</span>.</p>
+<div class="admonition-question admonition">
+<p class="admonition-title">Question</p>
+<p>What would be a good way to measure the distance between <span class="math notranslate nohighlight">\(X^{(1)}\)</span> and <span class="math notranslate nohighlight">\(X^{(2)} W\)</span>?</p>
+</div>
+<p>We arrive at the problem</p>
+<div class="math notranslate nohighlight">
+\[\min_{W: WW^T=W^TW=I} \|X^{(1)} - X^{(2)} W\|_F\]</div>
+<p>This is a very old and famous problem known as the <a class="reference external" href="https://en.wikipedia.org/wiki/Orthogonal_Procrustes_problem"><strong>orthogonal Procrustes problem</strong></a>,
+and it has an exact solution (fun fact: the solution uses the SVD).</p>
+<p>We can apply the Procrustes solution using <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.linalg.orthogonal_procrustes.html"><code class="docutils literal notranslate"><span class="pre">scipy.linalg.orthogonal_procrustes</span></code></a> or a wrapper in <code class="docutils literal notranslate"><span class="pre">graspologic</span></code>, the <a class="reference external" href="https://microsoft.github.io/graspologic/latest/reference/reference/align.html#orthogonal-procrustes"><code class="docutils literal notranslate"><span class="pre">OrthogonalProcrustes</span></code></a> class.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">graspologic.align</span> <span class="kn">import</span> <span class="n">OrthogonalProcrustes</span>
+
+<span class="n">op</span> <span class="o">=</span> <span class="n">OrthogonalProcrustes</span><span class="p">()</span>
+<span class="n">X_right_pred</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_right</span><span class="p">,</span> <span class="n">X_left</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">X_both</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">X_left</span><span class="p">,</span> <span class="n">X_right_pred</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">pairplot</span><span class="p">(</span>
+    <span class="n">X_both</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">4</span><span class="p">],</span>
+    <span class="n">labels</span><span class="p">,</span>
+    <span class="n">legend_name</span><span class="o">=</span><span class="s2">&quot;Side&quot;</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Latent position estimates (mapped)&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;seaborn.axisgrid.PairGrid at 0x134f0abe0&gt;
+</pre></div>
+</div>
+<img alt="_images/multiple_embedding_16_1.png" src="_images/multiple_embedding_16_1.png" />
+</div>
+</div>
+<div class="tip admonition">
+<p class="admonition-title">Question</p>
+<p>Looking at these embeddings, would you say these networks are similar or different, at
+least at a high level?</p>
+</div>
+</section>
+<section id="considerations">
+<h3>Considerations<a class="headerlink" href="#considerations" title="Permalink to this headline">#</a></h3>
+<div class="admonition-question admonition">
+<p class="admonition-title">Question</p>
+<p>Does the order of nodes in <span class="math notranslate nohighlight">\(X^{(2)}\)</span> matter? What does it represent?</p>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">88</span><span class="p">)</span>
+<span class="n">perm_inds</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X_right</span><span class="p">))</span>
+<span class="n">op</span> <span class="o">=</span> <span class="n">OrthogonalProcrustes</span><span class="p">()</span>
+<span class="n">X_right_pred</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_right</span><span class="p">[</span><span class="n">perm_inds</span><span class="p">],</span> <span class="n">X_left</span><span class="p">)</span>
+
+<span class="n">X_both</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">X_left</span><span class="p">,</span> <span class="n">X_right_pred</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">pairplot</span><span class="p">(</span>
+    <span class="n">X_both</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">4</span><span class="p">],</span>
+    <span class="n">labels</span><span class="p">,</span>
+    <span class="n">legend_name</span><span class="o">=</span><span class="s2">&quot;Side&quot;</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Latent position estimates (shuffled, mapped)&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;seaborn.axisgrid.PairGrid at 0x137e3b0d0&gt;
+</pre></div>
+</div>
+<img alt="_images/multiple_embedding_20_1.png" src="_images/multiple_embedding_20_1.png" />
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The orthogonal Procrustes solution only works for pairs of networks where we <em>know</em> the
+mapping between node <span class="math notranslate nohighlight">\(i\)</span>, graph 1 and node <span class="math notranslate nohighlight">\(i\)</span>, graph 2. As a consequence, this would
+only work if the networks have the same size.</p>
+<p>Note that we can use something called <a class="reference external" href="https://microsoft.github.io/graspologic/latest/reference/reference/align.html#seedless-procrustes"><code class="docutils literal notranslate"><span class="pre">SeedlessProcrustes</span></code></a> in <code class="docutils literal notranslate"><span class="pre">graspologic</span></code> if we had two networks of different sizes or
+where the mapping between nodes is unknown. There is more information about this method,
+as well as alignments in general, in the <a class="reference external" href="https://microsoft.github.io/graspologic/latest/tutorials/aligning/aligning.html"><code class="docutils literal notranslate"><span class="pre">align</span></code> tutorials</a>.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The dimensionality of the embedding can have a huge effect on the quality of the
+alignment (for reasons I won’t go into here, but talk about in a forthcoming paper). I
+always recommend that you try a range of dimensionalities, and <em>look at the embeddings</em>
+after aligning them.</p>
+</div>
+</section>
+</section>
+<section id="omnibus-embedding">
+<h2>Omnibus Embedding<a class="headerlink" href="#omnibus-embedding" title="Permalink to this headline">#</a></h2>
+<p>The method described above (basically just doing ASE twice) is a totally valid way of
+attacking this multiple network embedding problem, though it has many caveats. In
+practice, we often want to do multiple network embeddings without dealing with this
+alignment issue. For matched networks, we can use a technique called the Omnibus
+embedding (Omni, for short).</p>
+<p>The algorithm itself is pretty simple. We essentially construct a larger matrix
+(described in the figure below) which is constructed from each of the individual
+adjacency matrices. We then decompose that larger matrix <span class="math notranslate nohighlight">\(M\)</span> using the same process as
+ASE. Because this embedding is done in one stage (rather than one for each network) we
+no longer have the same issue with the nonidentifiability above, so we no longer have
+to worry about aligning our embeddings between networks.</p>
+<figure class="align-default" id="id76">
+<img alt="_images/omni.png" src="_images/omni.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 22 </span><span class="caption-text">Construction of the matrix <span class="math notranslate nohighlight">\(M\)</span> which is then decomposed using the SVD in the Omnibus
+embedding. Figure from <span id="id1">Athreya <em>et al.</em> [<a class="reference internal" href="random_graphs.html#id25" title="Avanti Athreya, Donniell E Fishkind, Minh Tang, Carey E Priebe, Youngser Park, Joshua T Vogelstein, Keith Levin, Vince Lyzinski, and Yichen Qin. Statistical inference on random dot product graphs: a survey. The Journal of Machine Learning Research, 18(1):8393–8484, 2017.">1</a>]</span>.</span><a class="headerlink" href="#id76" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">graspologic.embed</span> <span class="kn">import</span> <span class="n">OmnibusEmbed</span>
+
+<span class="n">omni</span> <span class="o">=</span> <span class="n">OmnibusEmbed</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">X_left</span><span class="p">,</span> <span class="n">X_right</span> <span class="o">=</span> <span class="n">omni</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">([</span><span class="n">left_adj</span><span class="p">,</span> <span class="n">right_adj</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">X_both</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">X_left</span><span class="p">,</span> <span class="n">X_right</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">pairplot</span><span class="p">(</span>
+    <span class="n">X_both</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">legend_name</span><span class="o">=</span><span class="s2">&quot;Side&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Latent position estimates (omnibus)&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;seaborn.axisgrid.PairGrid at 0x13807bd00&gt;
+</pre></div>
+</div>
+<img alt="_images/multiple_embedding_24_1.png" src="_images/multiple_embedding_24_1.png" />
+</div>
+</div>
+</section>
+<section id="multiple-ase">
+<h2>Multiple ASE<a class="headerlink" href="#multiple-ase" title="Permalink to this headline">#</a></h2>
+<p>Sometimes, we aren’t as interested in having a representation for each node in each
+graph - perhaps we don’t care about what is different between networks, and we are
+interested in grouping nodes based on their <em>shared</em> structure across many different
+networks. An algorithm called <strong>multiple adjacency spectral embedding (MASE)</strong> introduced
+in <span id="id2">Arroyo <em>et al.</em> [<a class="reference internal" href="#id70" title="Jesús Arroyo, Avanti Athreya, Joshua Cape, Guodong Chen, Carey E Priebe, and Joshua T Vogelstein. Inference for multiple heterogeneous networks with a common invariant subspace. Journal of Machine Learning Research, 22(142):1–49, 2021.">2</a>]</span> can be used for this task.</p>
+<p>I won’t go into all the details of the algorithm, though I believe you all could
+understand it based on what we’ve talked about in this course. However, I’ll say that
+this algorithm is associated with a model, where we model the probability matrix for
+graph <span class="math notranslate nohighlight">\(k\)</span> as</p>
+<div class="math notranslate nohighlight">
+\[P^{(k)} = V R^{(k)} V^T\]</div>
+<p>Note that there is no superscript on the <span class="math notranslate nohighlight">\(V\)</span> - these are node-wise representations
+which are <em>shared</em> across all of the networks. You can think of this as one embedding
+for each node in the network, but we got it using all of the networks to form this
+representation. The <span class="math notranslate nohighlight">\(R^{(k)}\)</span> matrices, sometimes called
+the “score” matrices, are able of representing how each network is (potentially)
+different.</p>
+<p>Using MASE is easy in <code class="docutils literal notranslate"><span class="pre">graspologic</span></code>. Here, we apply it to form a latent position
+estimate for each node pair</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">graspologic.embed</span> <span class="kn">import</span> <span class="n">MultipleASE</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">DATA_PATH</span> <span class="o">/</span> <span class="s2">&quot;processed_maggot/simple_color_map.json&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">palette</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+<span class="n">mase</span> <span class="o">=</span> <span class="n">MultipleASE</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">X_joint</span> <span class="o">=</span> <span class="n">mase</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">([</span><span class="n">left_adj</span><span class="p">,</span> <span class="n">right_adj</span><span class="p">])</span>
+
+<span class="n">node_labels</span> <span class="o">=</span> <span class="n">left_nodes</span><span class="p">[</span><span class="s2">&quot;simple_group&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+<span class="n">pairplot</span><span class="p">(</span>
+    <span class="n">X_joint</span><span class="p">,</span>
+    <span class="n">node_labels</span><span class="p">,</span>
+    <span class="n">legend_name</span><span class="o">=</span><span class="s2">&quot;Cell type&quot;</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Latent position estimates (MASE)&quot;</span><span class="p">,</span>
+    <span class="n">palette</span><span class="o">=</span><span class="n">palette</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;seaborn.axisgrid.PairGrid at 0x1387248b0&gt;
+</pre></div>
+</div>
+<img alt="_images/multiple_embedding_26_1.png" src="_images/multiple_embedding_26_1.png" />
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The MASE algorithm also has a method for extracting a representation per <em>network</em>. In
+<code class="docutils literal notranslate"><span class="pre">graspologic</span></code>, these can be accessed using the <code class="docutils literal notranslate"><span class="pre">.score_</span></code> attribute of the fitted object.
+More details can be found in the <a class="reference external" href="https://microsoft.github.io/graspologic/latest/tutorials/embedding/MASE.html">MASE tutorial</a>.</p>
+</div>
+<figure class="align-default" id="id77">
+<img alt="_images/mase-brain.png" src="_images/mase-brain.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 23 </span><span class="caption-text">Example of extracting a per-graph representation from the MASE algorithm. Figure from
+<span id="id3">Arroyo <em>et al.</em> [<a class="reference internal" href="#id70" title="Jesús Arroyo, Avanti Athreya, Joshua Cape, Guodong Chen, Carey E Priebe, and Joshua T Vogelstein. Inference for multiple heterogeneous networks with a common invariant subspace. Journal of Machine Learning Research, 22(142):1–49, 2021.">2</a>]</span>.</span><a class="headerlink" href="#id77" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="representations-for-each-network">
+<h2>Representations for each network<a class="headerlink" href="#representations-for-each-network" title="Permalink to this headline">#</a></h2>
+<p>The following example comes from the <code class="docutils literal notranslate"><span class="pre">graspologic</span></code> <a class="reference external" href="https://microsoft.github.io/graspologic/latest/tutorials/connectomics/mcc.html">tutorial on multiscale comparative connectomics</a>, which is based on <span id="id4">Gopalakrishnan <em>et al.</em> [<a class="reference internal" href="#id71" title="Vivek Gopalakrishnan, Jaewon Chung, Eric Bridgeford, Benjamin D Pedigo, Jesús Arroyo, Lucy Upchurch, G Allan Johnson, Nian Wang, Youngser Park, Carey E Priebe, and others. Multiscale comparative connectomics. arXiv preprint arXiv:2011.14990, 2020.">3</a>]</span>.
+The data comes from <span id="id5">Wang <em>et al.</em> [<a class="reference internal" href="#id72" title="Nian Wang, Robert J Anderson, David G Ashbrook, Vivek Gopalakrishnan, Youngser Park, Carey E Priebe, Yi Qi, Rick Laoprasert, Joshua T Vogelstein, Robert W Williams, and others. Variability and heritability of mouse brain structure: microscopic mri atlases and connectomes for diverse strains. NeuroImage, 222:117274, 2020.">4</a>]</span>.</p>
+<p>Below, we load in 32 networks - these networks come from MRI scans of mice brains, and
+these mouse came from one of 4 different genotypes. There are 8 mice from each genotype.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">graspologic.datasets</span> <span class="kn">import</span> <span class="n">load_mice</span>
+
+<span class="c1"># Load the full mouse dataset</span>
+<span class="n">mice</span> <span class="o">=</span> <span class="n">load_mice</span><span class="p">()</span>
+
+<span class="c1"># Stack all adjacency matrices in a 3D numpy array</span>
+<span class="n">graphs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mice</span><span class="o">.</span><span class="n">graphs</span><span class="p">)</span>
+<span class="n">graphs</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(32, 332, 332)
+</pre></div>
+</div>
+</div>
+</div>
+<p>As before, we can use the Omnibus embedding to construct an embedding for each network
+in the same space, without having to do any alignment.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You could absolutely try doing this step with any of the other embedding methods that
+we talked about!</p>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Jointly embed graphs using omnibus embedding</span>
+<span class="n">embedder</span> <span class="o">=</span> <span class="n">OmnibusEmbed</span><span class="p">(</span><span class="n">n_elbows</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">omni_embedding</span> <span class="o">=</span> <span class="n">embedder</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">graphs</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">omni_embedding</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(32, 332, 9)
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now, we have an embedding for each node in each network, and we know that these nodes
+are <em>matched</em> across networks. To measure the difference between two networks, then,
+we can do something like</p>
+<div class="math notranslate nohighlight">
+\[d(k, l) = \|X^{(k)} - X^{(l)}\|_F\]</div>
+<p>Now, we can do this for each <span class="math notranslate nohighlight">\((k, l)\)</span> pair of networks, and create a distance matrix,
+<span class="math notranslate nohighlight">\(D\)</span>.</p>
+<div class="math notranslate nohighlight">
+\[D_{kl} = d(k, l)\]</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dissimilarity_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">graphs</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">graphs</span><span class="p">)))</span>
+
+<span class="c1"># note: this is a slow way of doing this, but also the most clear to understand.</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">embedding1</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">omni_embedding</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">embedding2</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">omni_embedding</span><span class="p">):</span>
+        <span class="n">dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">embedding1</span> <span class="o">-</span> <span class="n">embedding2</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="s2">&quot;fro&quot;</span><span class="p">)</span>
+        <span class="n">dissimilarity_matrix</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">dist</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>What does this matrix of dissimilarities look like?</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">graspologic.plot</span> <span class="kn">import</span> <span class="n">heatmap</span>
+<span class="n">scaled_dissimilarity</span> <span class="o">=</span> <span class="n">dissimilarity_matrix</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">dissimilarity_matrix</span><span class="p">)</span>
+
+<span class="n">_</span> <span class="o">=</span> <span class="n">heatmap</span><span class="p">(</span><span class="n">scaled_dissimilarity</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="s2">&quot;talk&quot;</span><span class="p">,</span> <span class="n">inner_hier_labels</span><span class="o">=</span><span class="n">mice</span><span class="o">.</span><span class="n">labels</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/multiple_embedding_36_0.png" src="_images/multiple_embedding_36_0.png" />
+</div>
+</div>
+<p>A technique called <a class="reference external" href="https://en.wikipedia.org/wiki/Multidimensional_scaling#Classical_multidimensional_scaling"><strong>classical multidimensional scaling</strong></a>
+can be used to embed a matrix of distances or dissimilarities, much like we have been
+discussing the embedding of networks.</p>
+<p>In <code class="docutils literal notranslate"><span class="pre">graspologic</span></code>, the <code class="docutils literal notranslate"><span class="pre">ClassicalMDS</span></code> class can operate on a dissimilarity matrix
+directly as we do below using the <code class="docutils literal notranslate"><span class="pre">dissimilarity='precomputed'</span></code> flag. You can also
+directly pass in <code class="docutils literal notranslate"><span class="pre">omni_embedding</span></code>, if you wanted.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">graspologic.embed</span> <span class="kn">import</span> <span class="n">ClassicalMDS</span>
+<span class="kn">from</span> <span class="nn">graspologic.plot</span> <span class="kn">import</span> <span class="n">heatmap</span>
+
+<span class="c1"># Further reduce embedding dimensionality using cMDS</span>
+<span class="n">cmds</span> <span class="o">=</span> <span class="n">ClassicalMDS</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dissimilarity</span><span class="o">=</span><span class="s2">&quot;precomputed&quot;</span><span class="p">)</span>
+<span class="n">cmds_embedding</span> <span class="o">=</span> <span class="n">cmds</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">scaled_dissimilarity</span><span class="p">)</span>
+<span class="n">cmds_embedding</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">cmds_embedding</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Dimension 1&quot;</span><span class="p">,</span> <span class="s2">&quot;Dimension 2&quot;</span><span class="p">])</span>
+<span class="n">cmds_embedding</span><span class="p">[</span><span class="s2">&quot;Genotype&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mice</span><span class="o">.</span><span class="n">labels</span>
+
+<span class="n">palette</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;DBA2&quot;</span><span class="p">:</span> <span class="s2">&quot;#e7298a&quot;</span><span class="p">,</span> <span class="s2">&quot;B6&quot;</span><span class="p">:</span> <span class="s2">&quot;#1b9e77&quot;</span><span class="p">,</span> <span class="s2">&quot;BTBR&quot;</span><span class="p">:</span> <span class="s2">&quot;#d95f02&quot;</span><span class="p">,</span> <span class="s2">&quot;CAST&quot;</span><span class="p">:</span> <span class="s2">&quot;#7570b3&quot;</span><span class="p">}</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">scatterplot</span><span class="p">(</span>
+    <span class="n">x</span><span class="o">=</span><span class="s2">&quot;Dimension 1&quot;</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="s2">&quot;Dimension 2&quot;</span><span class="p">,</span>
+    <span class="n">hue</span><span class="o">=</span><span class="s2">&quot;Genotype&quot;</span><span class="p">,</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">cmds_embedding</span><span class="p">,</span>
+    <span class="n">palette</span><span class="o">=</span><span class="n">palette</span><span class="p">,</span>
+    <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([])</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/multiple_embedding_38_0.png" src="_images/multiple_embedding_38_0.png" />
+</div>
+</div>
+<p>What if we hadn’t known the genotype labels ahead of time, and wanted to cluster the
+networks into meaningful groups? We can just run your favorite clustering algorithm,
+either on the set of points learned by classical multidimensional scaling, or by
+clustering directly on the dissimilarity matrix as I do below.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">scipy.cluster</span> <span class="kn">import</span> <span class="n">hierarchy</span>
+<span class="kn">from</span> <span class="nn">scipy.spatial.distance</span> <span class="kn">import</span> <span class="n">squareform</span>
+
+<span class="n">Z</span> <span class="o">=</span> <span class="n">hierarchy</span><span class="o">.</span><span class="n">linkage</span><span class="p">(</span><span class="n">squareform</span><span class="p">(</span><span class="n">scaled_dissimilarity</span><span class="p">),</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;single&quot;</span><span class="p">)</span>
+
+<span class="n">network_colors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="n">palette</span><span class="o">.</span><span class="n">get</span><span class="p">)(</span><span class="n">mice</span><span class="o">.</span><span class="n">labels</span><span class="p">)</span>
+
+<span class="n">clustergrid</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">clustermap</span><span class="p">(</span>
+    <span class="n">scaled_dissimilarity</span><span class="p">,</span>
+    <span class="n">row_linkage</span><span class="o">=</span><span class="n">Z</span><span class="p">,</span>
+    <span class="n">col_linkage</span><span class="o">=</span><span class="n">Z</span><span class="p">,</span>
+    <span class="n">row_colors</span><span class="o">=</span><span class="n">network_colors</span><span class="p">,</span>
+    <span class="n">col_colors</span><span class="o">=</span><span class="n">network_colors</span><span class="p">,</span>
+    <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;RdBu_r&quot;</span><span class="p">,</span>
+    <span class="n">center</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">xticklabels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">yticklabels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># label the colorbar</span>
+<span class="n">clustergrid</span><span class="o">.</span><span class="n">ax_cbar</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Dissimilarity&quot;</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+
+<span class="c1"># label one of the object color labels</span>
+<span class="n">col_ax</span> <span class="o">=</span> <span class="n">clustergrid</span><span class="o">.</span><span class="n">ax_col_colors</span>
+<span class="n">col_ax</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([</span><span class="mf">0.5</span><span class="p">])</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">col_ax</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">([</span><span class="s2">&quot;Genotype&quot;</span><span class="p">],</span> <span class="n">va</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/multiple_embedding_40_0.png" src="_images/multiple_embedding_40_0.png" />
+</div>
+</div>
+<p>With this representation that we learned from our network embeddings, our clustering
+exactly recovered the genotype labels!</p>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">#</a></h2>
+<div class="docutils container" id="id6">
+<dl class="citation">
+<dt class="label" id="id25"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
+<dd><p>Avanti Athreya, Donniell E Fishkind, Minh Tang, Carey E Priebe, Youngser Park, Joshua T Vogelstein, Keith Levin, Vince Lyzinski, and Yichen Qin. Statistical inference on random dot product graphs: a survey. <em>The Journal of Machine Learning Research</em>, 18(1):8393–8484, 2017.</p>
+</dd>
+<dt class="label" id="id70"><span class="brackets">2</span><span class="fn-backref">(<a href="#id2">1</a>,<a href="#id3">2</a>)</span></dt>
+<dd><p>Jesús Arroyo, Avanti Athreya, Joshua Cape, Guodong Chen, Carey E Priebe, and Joshua T Vogelstein. Inference for multiple heterogeneous networks with a common invariant subspace. <em>Journal of Machine Learning Research</em>, 22(142):1–49, 2021.</p>
+</dd>
+<dt class="label" id="id71"><span class="brackets"><a class="fn-backref" href="#id4">3</a></span></dt>
+<dd><p>Vivek Gopalakrishnan, Jaewon Chung, Eric Bridgeford, Benjamin D Pedigo, Jesús Arroyo, Lucy Upchurch, G Allan Johnson, Nian Wang, Youngser Park, Carey E Priebe, and others. Multiscale comparative connectomics. <em>arXiv preprint arXiv:2011.14990</em>, 2020.</p>
+</dd>
+<dt class="label" id="id72"><span class="brackets"><a class="fn-backref" href="#id5">4</a></span></dt>
+<dd><p>Nian Wang, Robert J Anderson, David G Ashbrook, Vivek Gopalakrishnan, Youngser Park, Carey E Priebe, Yi Qi, Rick Laoprasert, Joshua T Vogelstein, Robert W Williams, and others. Variability and heritability of mouse brain structure: microscopic mri atlases and connectomes for diverse strains. <em>NeuroImage</em>, 222:117274, 2020.</p>
+</dd>
+</dl>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="graph_matching.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">Graph matching</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="ranking.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Ranking and flow</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Benjamin D. Pedigo<br/>
+  
+      &copy; Copyright 2022.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

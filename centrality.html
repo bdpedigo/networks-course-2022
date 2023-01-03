@@ -1,0 +1,1577 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Centrality measures &#8212; Network Data Science</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script async="async" kind="hypothesis" src="https://hypothes.is/embed.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="shortcut icon" href="_static/logo.png"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Random network models" href="random_graphs.html" />
+    <link rel="prev" title="Connected components" href="connected_components.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en">
+    
+
+    <!-- Google Analytics -->
+    
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-JYHFQNEPZN"></script>
+<script>
+                    window.dataLayer = window.dataLayer || [];
+                    function gtag(){ dataLayer.push(arguments); }
+                    gtag('js', new Date());
+                    gtag('config', 'G-JYHFQNEPZN');
+                </script>
+
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="_static/logo.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Network Data Science</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="landing.html">
+                    Welcome
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Course logistics
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="syllabus.html">
+   Syllabus
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="calendar.html">
+   Calendar
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="mini_assignment.html">
+   Mini-assignment
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="final_project.html">
+   Final project
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Resources
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="online_resources.html">
+   Online
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="books.html">
+   Books
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="datasets.html">
+   Datasets
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Lectures
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference external" href="https://bdpedigo.github.io/networks-course/welcome.html">
+   Welcome
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference external" href="https://bdpedigo.github.io/networks-course/what_are_networks.html">
+   What are networks?
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="representing_networks.html">
+   Representing networks
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="plotting_networks.html">
+   Plotting networks
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="connected_components.html">
+   Connected components
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Centrality measures
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="random_graphs.html">
+   Random network models
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="community_detection.html">
+   Community detection
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="embedding.html">
+   Network embedding
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="graph_matching.html">
+   Graph matching
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="multiple_embedding.html">
+   Embedding multiple networks
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ranking.html">
+   Ranking and flow
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/bdpedigo/networks-course/main?urlpath=tree/docs/centrality.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-repository-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Source repositories">
+      <i class="fab fa-github"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://github.com/bdpedigo/networks-course"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Source repository"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="headerbtn__text-container">repository</span>
+</a>
+
+      </li>
+      
+      <li>
+        <a href="https://github.com/bdpedigo/networks-course/issues/new?title=Issue%20on%20page%20%2Fcentrality.html&body=Your%20issue%20content%20here."
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Open an issue"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="headerbtn__text-container">open issue</span>
+</a>
+
+      </li>
+      
+      <li>
+        <a href="https://github.com/bdpedigo/networks-course/edit/main/docs/centrality.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Edit this page"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="headerbtn__text-container">suggest edit</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="_sources/centrality.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#degrees">
+   Degrees
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#eigenvector-centrality">
+   Eigenvector centrality
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#pagerank">
+   PageRank
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#random-walks">
+     Random walks
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#random-walks-with-teleportation">
+     Random walks with teleportation
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#betweenness-centrality">
+   Betweenness centrality
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#shortest-paths">
+     Shortest paths
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#motivating-betweenness-centrality">
+     Motivating betweenness centrality
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#comparing-the-centrality-measures">
+   Comparing the centrality measures
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#final-note">
+   Final note
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#references">
+   References
+  </a>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Centrality measures</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#degrees">
+   Degrees
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#eigenvector-centrality">
+   Eigenvector centrality
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#pagerank">
+   PageRank
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#random-walks">
+     Random walks
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#random-walks-with-teleportation">
+     Random walks with teleportation
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#betweenness-centrality">
+   Betweenness centrality
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#shortest-paths">
+     Shortest paths
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#motivating-betweenness-centrality">
+     Motivating betweenness centrality
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#comparing-the-centrality-measures">
+   Comparing the centrality measures
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#final-note">
+   Final note
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#references">
+   References
+  </a>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section class="tex2jax_ignore mathjax_ignore" id="centrality-measures">
+<h1>Centrality measures<a class="headerlink" href="#centrality-measures" title="Permalink to this headline">#</a></h1>
+<p>Much of this content is based heavily on Section 7.1 from Mark Newman’s “Networks”
+<span id="id1">[<a class="reference internal" href="community_detection.html#id43" title="Mark Newman. Networks. Oxford university press, 2018.">1</a>]</span>.</p>
+<p>Lots of research has gone into studying various notions of a “how important is each node?” in
+a network. Of course, as this vague question suggests, there are many ways to define
+what we mean by important. Below, we’ll cover a few of the most famous and commonly
+used notions, primarily because it will be useful to know what these terms mean when
+reading studies which use network science. Also, many of these methods are based on
+elegant and relatively simple mathematics.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">graspologic.datasets</span> <span class="kn">import</span> <span class="n">load_drosophila_left</span>
+<span class="kn">from</span> <span class="nn">graspologic.utils</span> <span class="kn">import</span> <span class="n">binarize</span>
+
+
+<span class="n">A</span> <span class="o">=</span> <span class="n">load_drosophila_left</span><span class="p">()[:</span><span class="mi">28</span><span class="p">,</span> <span class="p">:</span><span class="mi">28</span><span class="p">]</span>
+<span class="n">A</span> <span class="o">=</span> <span class="n">binarize</span><span class="p">(</span><span class="n">A</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">from_numpy_array</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">create_using</span><span class="o">=</span><span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">)</span>
+
+<span class="c1"># g = nx.karate_club_graph()</span>
+
+<span class="c1"># nodelist = list(g.nodes)</span>
+<span class="c1"># A = nx.to_numpy_array(g, nodelist=nodelist).astype(int)</span>
+
+
+<span class="k">def</span> <span class="nf">map_to_nodes</span><span class="p">(</span><span class="n">node_map</span><span class="p">):</span>
+    <span class="n">node_map</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="c1"># utility function to make it easy to compare dicts to array outputs</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">node_map</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">))(</span><span class="n">nodelist</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="degrees">
+<h2>Degrees<a class="headerlink" href="#degrees" title="Permalink to this headline">#</a></h2>
+<p>The first notion of centrality we’ll consider is the node’s <a class="reference external" href="https://en.wikipedia.org/wiki/Degree_(graph_theory)"><strong>degree</strong></a>, sometimes called <strong>degree centrality</strong>,
+though I personally won’t use that term. The degree of a node is simply the number of other nodes to which it
+is connected.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">g</span><span class="o">.</span><span class="n">degree</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>DiDegreeView({0: 49, 1: 50, 2: 51, 3: 52, 4: 52, 5: 52, 6: 47, 7: 49, 8: 49, 9: 47, 10: 46, 11: 48, 12: 50, 13: 46, 14: 52, 15: 51, 16: 50, 17: 46, 18: 49, 19: 52, 20: 50, 21: 50, 22: 42, 23: 47, 24: 34, 25: 41, 26: 38, 27: 48})
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">degrees</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">degree</span><span class="p">())</span>
+<span class="n">map_to_nodes</span><span class="p">(</span><span class="n">degrees</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([49, 50, 51, 52, 52, 52, 47, 49, 49, 47, 46, 48, 50, 46, 52, 51, 50,
+       46, 49, 52, 50, 50, 42, 47, 34, 41, 38, 48,  0,  0,  0,  0,  0,  0])
+</pre></div>
+</div>
+</div>
+</div>
+<p>Computing the degree is also quite easy with the adjacency matrix.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">A</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">A</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([49, 50, 51, 52, 52, 52, 47, 49, 49, 47, 46, 48, 50, 46, 52, 51, 50,
+       46, 49, 52, 50, 50, 42, 47, 34, 41, 38, 48])
+</pre></div>
+</div>
+</div>
+</div>
+<p>We see that the output matches, as expected. For a directed network, there are distinct
+notions of degree based on whether we are considering a node’s outputs or inputs. These
+are simply termed <strong><a class="reference external" href="https://en.wikipedia.org/wiki/Directed_graph#Indegree_and_outdegree">out and in degree</a></strong>, where
+out degree is the number of outputs from a given node, and likewise for the in degree.</p>
+<div class="admonition-question admonition">
+<p class="admonition-title">Question</p>
+<p>If we want to compute the out degree from the adjacency matrix, should we sum along rows
+or along columns?</p>
+</div>
+<p>Let’s see what this looks like to compute using <code class="docutils literal notranslate"><span class="pre">networkx</span></code> and an adjacency matrix:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">out_degrees</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">out_degrees</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([24, 26, 26, 26, 25, 25, 24, 26, 26, 23, 25, 25, 24, 23, 25, 26, 23,
+       23, 24, 25, 26, 25, 22, 24, 17, 22, 18, 21])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">map_to_nodes</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">out_degree</span><span class="p">()))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([24, 26, 26, 26, 25, 25, 24, 26, 26, 23, 25, 25, 24, 23, 25, 26, 23,
+       23, 24, 25, 26, 25, 22, 24, 17, 22, 18, 21,  0,  0,  0,  0,  0,  0])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">in_degrees</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">in_degrees</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([25, 24, 25, 26, 27, 27, 23, 23, 23, 24, 21, 23, 26, 23, 27, 25, 27,
+       23, 25, 27, 24, 25, 20, 23, 17, 19, 20, 27])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">map_to_nodes</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">in_degree</span><span class="p">()))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([25, 24, 25, 26, 27, 27, 23, 23, 23, 24, 21, 23, 26, 23, 27, 25, 27,
+       23, 25, 27, 24, 25, 20, 23, 17, 19, 20, 27,  0,  0,  0,  0,  0,  0])
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="eigenvector-centrality">
+<h2>Eigenvector centrality<a class="headerlink" href="#eigenvector-centrality" title="Permalink to this headline">#</a></h2>
+<p>Our next notion of importance for each node is called <strong><a class="reference external" href="https://en.wikipedia.org/wiki/Eigenvector_centrality">eigenvector centrality</a></strong>. The eigenvector centrality has an interesting, circular definition: nodes are considered more important if they themselves are connected to important nodes. For this and many other centrality
+measures, we also don’t care about the scale of these importance scores - for instance, scores
+of <span class="math notranslate nohighlight">\([2, 1]\)</span> would be interpreted the same as <span class="math notranslate nohighlight">\([20, 10]\)</span>: the first node is twice as important
+as the second. We also want each of these centrality scores to be positive.</p>
+<p>How can we write this down mathematically? Let’s say that we are after a vector <span class="math notranslate nohighlight">\(x\)</span>, which
+has length <span class="math notranslate nohighlight">\(n\)</span> (the number of nodes in our graph). Element <span class="math notranslate nohighlight">\(x_i\)</span> in this vector will
+represent the eigenvector centrality that we are after for node <span class="math notranslate nohighlight">\(i\)</span>. Based on what we
+said about in the definition, then this means that we can write:</p>
+<div class="math notranslate nohighlight">
+\[x_i = c \sum_j A_{ij} x_j\]</div>
+<p>How does this work? For any potential edge incident to <span class="math notranslate nohighlight">\(i\)</span> that doesn’t exist, <span class="math notranslate nohighlight">\(A_{ij} = 0\)</span>,
+and thus we won’t sum up the contribution of those nodes which aren’t neighbors of <span class="math notranslate nohighlight">\(i\)</span>.
+Why do we have a constant, <span class="math notranslate nohighlight">\(c\)</span>? Since the definition of eigenvector centrality is completely
+<em>relative</em>, we could put any constant <span class="math notranslate nohighlight">\(c &gt; 0\)</span>, and the definition would hold. Since this
+choice is relative, let’s set <span class="math notranslate nohighlight">\(c = \frac{1}{\lambda}\)</span>, where <span class="math notranslate nohighlight">\(\lambda\)</span> is the largest eigenvalue
+of <span class="math notranslate nohighlight">\(A\)</span>.</p>
+<div class="math notranslate nohighlight">
+\[x_i = \frac{1}{\lambda} \sum_j A_{ij} x_j\]</div>
+<p>Now, this formula is starting to look like something we know from linear algebra. We
+can rewrite this set of equations (for all <span class="math notranslate nohighlight">\(i\)</span>) as a matrix/vector equation:</p>
+<div class="math notranslate nohighlight">
+\[\lambda x = A x\]</div>
+<p>Which is the familiar definition of an eigenvector/eigenvalue, where in this case, <span class="math notranslate nohighlight">\(x\)</span>
+would correspond to the eigenvector of the largest eigenvalue of <span class="math notranslate nohighlight">\(A\)</span>. Why are we considering
+only the largest eigenvalue of <span class="math notranslate nohighlight">\(A\)</span>, rather than any other? This is because if we want a
+positive score for each node in our network, the only eigenvector with all positive elements
+will be the one we chose above, by a famous result called the <a class="reference external" href="https://en.wikipedia.org/wiki/Perron%E2%80%93Frobenius_theorem">Perron-Frobenius theorem</a>.</p>
+<p>Knowing this, we can compute the eigenvector centrality quite easily from the adjacency matrix.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">g</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">karate_club_graph</span><span class="p">()</span>
+<span class="n">nodelist</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span>
+<span class="n">A</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">to_numpy_array</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">nodelist</span><span class="o">=</span><span class="n">nodelist</span><span class="p">)</span>
+
+<span class="n">eigenvalues</span><span class="p">,</span> <span class="n">eigenvectors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eig</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="n">first_eigenvector</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">eigenvectors</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">first_eigenvector</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([0.35549144, 0.26595992, 0.3171925 , 0.21117972, 0.07596882,
+       0.07948305, 0.07948305, 0.17095975, 0.22740391, 0.10267425,
+       0.07596882, 0.0528557 , 0.08425463, 0.22647272, 0.10140326,
+       0.10140326, 0.02363563, 0.09239954, 0.10140326, 0.14791251,
+       0.10140326, 0.09239954, 0.10140326, 0.15011857, 0.05705244,
+       0.05920647, 0.07557941, 0.13347715, 0.13107782, 0.13496082,
+       0.1747583 , 0.19103384, 0.30864422, 0.37336347])
+</pre></div>
+</div>
+</div>
+</div>
+<p>The eigenvector centrality is also provided as a function directly in <code class="docutils literal notranslate"><span class="pre">networkx</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">map_to_nodes</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">eigenvector_centrality</span><span class="p">(</span><span class="n">g</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([0.35548349, 0.26595387, 0.31718939, 0.21117408, 0.07596646,
+       0.07948058, 0.07948058, 0.17095511, 0.22740509, 0.10267519,
+       0.07596646, 0.05285417, 0.08425192, 0.2264697 , 0.10140628,
+       0.10140628, 0.02363479, 0.09239676, 0.10140628, 0.14791134,
+       0.10140628, 0.09239676, 0.10140628, 0.15012329, 0.05705374,
+       0.0592082 , 0.07558192, 0.13347933, 0.13107926, 0.13496529,
+       0.17476028, 0.19103627, 0.30865105, 0.37337121])
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="pagerank">
+<h2>PageRank<a class="headerlink" href="#pagerank" title="Permalink to this headline">#</a></h2>
+<p>See the <a class="reference external" href="https://en.wikipedia.org/wiki/PageRank">Wikipedia article on PageRank</a> for more detail than I give here.</p>
+<p>PageRank is another famous centrality measure - famous because it was one of the algorithms used early on by Google to decide which websites in a web network were important.</p>
+<p>There are several ways to derive the definition of PageRank, but we’ll use one based on something called <strong><a class="reference external" href="https://en.wikipedia.org/wiki/Random_walk">random walks</a></strong> to motivate this algorithm.</p>
+<section id="random-walks">
+<h3>Random walks<a class="headerlink" href="#random-walks" title="Permalink to this headline">#</a></h3>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Random walks are a very important concept in network science which we’ll come back to later in the course.</p>
+</div>
+<figure class="align-default" id="random-walk">
+<img alt="_images/random-walk.png" src="_images/random-walk.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 2 </span><span class="caption-text">Imagining a random walk on a network - image from <a class="reference external" href="http://www2.dc.ufscar.br/~comin/projects/complex-networks/">Cesar H Comin’s website</a>.</span><a class="headerlink" href="#random-walk" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+<p>Let’s say we have an unweighted, directed network (for the time being). At time <span class="math notranslate nohighlight">\(t\)</span>, imagine you are a placed at a random node in a network, node <span class="math notranslate nohighlight">\(i\)</span>. To decide your position at time <span class="math notranslate nohighlight">\(t+1\)</span>, you <em>randomly</em> chose one of the outbound links from node <span class="math notranslate nohighlight">\(A\)</span> to follow.</p>
+<p>Let <span class="math notranslate nohighlight">\(x^{t+1}\)</span> be an <span class="math notranslate nohighlight">\(n\)</span>-length vector, with all 0s except for a <span class="math notranslate nohighlight">\(1\)</span> at the position
+of our random walker at time <span class="math notranslate nohighlight">\(t+1\)</span>.</p>
+<p>We can write the probability of being at node <span class="math notranslate nohighlight">\(j\)</span> at time <span class="math notranslate nohighlight">\(t+1\)</span> as:</p>
+<p><span class="math notranslate nohighlight">\(P[x_j^{t+1} = 1] = A_{ij}/d_{i}\)</span></p>
+<p>In other words, this probability is <span class="math notranslate nohighlight">\(1 / d_{i}\)</span> if <span class="math notranslate nohighlight">\(i\)</span> is connected to <span class="math notranslate nohighlight">\(j\)</span>, and 0 otherwise.</p>
+<p>Rather than considering a single random walker (e.g. the vector <span class="math notranslate nohighlight">\(x\)</span> has 0’s and 1’s), it
+is often more useful to consider the <em>probability distribution</em> of a random walker. In
+other words, we can consider the vector <span class="math notranslate nohighlight">\(x^{t}\)</span> to be positive and sum to 1, and element
+<span class="math notranslate nohighlight">\(x_i^{t}\)</span> represents the probability of being at node <span class="math notranslate nohighlight">\(i\)</span> and time <span class="math notranslate nohighlight">\(t\)</span>.</p>
+<p>Let <span class="math notranslate nohighlight">\(D\)</span> be an <span class="math notranslate nohighlight">\(n \times n\)</span> matrix whose diagonal is the out degree of each node. Now, we
+can create a matrix <span class="math notranslate nohighlight">\(P\)</span> which represents the <strong>transition probabilities</strong> for our random walk:</p>
+<div class="math notranslate nohighlight">
+\[P = D^{-1} A\]</div>
+<p>In essence, we have just divided each row of <span class="math notranslate nohighlight">\(A\)</span> by its out degree.</p>
+<p>Now, we can use a simple matrix/vector equation to update the probability distribution of
+our random walker at time <span class="math notranslate nohighlight">\(t+1\)</span> based on that at time <span class="math notranslate nohighlight">\(t\)</span>.</p>
+<div class="math notranslate nohighlight">
+\[x^{(t+1)} = A^T D^{-1} x^{(t)} = P^T x^{(t)}\]</div>
+</section>
+<section id="random-walks-with-teleportation">
+<h3>Random walks with teleportation<a class="headerlink" href="#random-walks-with-teleportation" title="Permalink to this headline">#</a></h3>
+<p>One issue with the model above is that sometimes a random walker could get stuck in a
+node with no output edges. The authors of PageRank made one small modification to this random
+walk scheme - at each time step, with probability <span class="math notranslate nohighlight">\(\alpha\)</span> the random walk proceeds as before. With probability <span class="math notranslate nohighlight">\(1 - \alpha\)</span>, the random walker <em>teleports</em> to node completely at random.</p>
+<p>Now, we have</p>
+<div class="math notranslate nohighlight">
+\[x^{(t+1)} = \alpha A^T D^{-1} x^{(t)} + \frac{(1 - \alpha)}{n} 1\]</div>
+<div class="admonition-question admonition">
+<p class="admonition-title">Question</p>
+<p>What is <span class="math notranslate nohighlight">\(E x^{(t)}\)</span>?</p>
+<p>Hint: <span class="math notranslate nohighlight">\(x^{(t)}\)</span> represents a probability distribution.</p>
+</div>
+<p>We can rearrange as</p>
+<div class="math notranslate nohighlight">
+\[x^{(t+1)} = \left (\alpha P^T + \frac{(1 - \alpha)}{n} E \right ) x^{(t)}\]</div>
+<div class="math notranslate nohighlight">
+\[x^{(t+1)} = \hat{P} x^{(t)}\]</div>
+<p>Where</p>
+<div class="math notranslate nohighlight">
+\[\hat{P} = \alpha P^T + \frac{(1 - \alpha)}{n} E\]</div>
+<p>Given this, we are basically done finding the PageRank of each node! The logic of PageRank
+is simply to give an importance to each node which is proportional to the limiting probability
+of this random walker (with teleportation) landing on that node after a long time walking
+on our network. Because of some linear algebraic properties which we probably won’t get
+into in this course, this limiting distribution (e.g. <span class="math notranslate nohighlight">\(x^{(t)}\)</span> as <span class="math notranslate nohighlight">\(t\)</span> goes to infinity)
+converges in a modest number of iterations because of the teleportation probability we added.
+The value of <span class="math notranslate nohighlight">\(\alpha\)</span> can be set by the user, but typically people leave it at <span class="math notranslate nohighlight">\(0.85\)</span>.</p>
+<p>Below is a simple implementation of computing PageRank.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.85</span>
+<span class="n">n_iters</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">out_degrees</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">D_inv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">out_degrees</span><span class="p">)</span>
+<span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">()</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">P</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">D_inv</span>
+<span class="n">P_mod</span> <span class="o">=</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">P</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">alpha</span><span class="p">)</span> <span class="o">/</span> <span class="n">n</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_iters</span><span class="p">):</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">P_mod</span> <span class="o">@</span> <span class="n">x</span>
+
+<span class="n">x</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([0.09699729, 0.05287692, 0.05707851, 0.03585986, 0.02197795,
+       0.02911115, 0.02911115, 0.0244905 , 0.02976606, 0.0143094 ,
+       0.02197795, 0.00956475, 0.01464489, 0.02953646, 0.01453599,
+       0.01453599, 0.01678401, 0.01455868, 0.01453599, 0.01960464,
+       0.01453599, 0.01455868, 0.01453599, 0.03152251, 0.02107603,
+       0.0210062 , 0.01504404, 0.02563977, 0.01957346, 0.02628854,
+       0.02459016, 0.03715809, 0.07169323, 0.10091918])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>A good exercise would be to plot how much this vector (<code class="docutils literal notranslate"><span class="pre">x</span></code>) is changing between each iteration.
+How long does it take for this process to converge? Or, what happens if you use a different
+initialization?</p>
+</div>
+<p>Note that this is algorithm also has an interpretation as finding the principal eigenvector
+of the matrix <code class="docutils literal notranslate"><span class="pre">P_mod</span></code> above through a process known as <a class="reference external" href="https://en.wikipedia.org/wiki/Power_iteration">power iteration</a>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">eigenvalues</span><span class="p">,</span> <span class="n">eigenvectors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eig</span><span class="p">(</span><span class="n">P_mod</span><span class="p">)</span>
+<span class="n">first_eigenvector</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">eigenvectors</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">first_eigenvector</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">first_eigenvector</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">first_eigenvector</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([0.09699729, 0.05287692, 0.05707851, 0.03585986, 0.02197795,
+       0.02911115, 0.02911115, 0.0244905 , 0.02976606, 0.0143094 ,
+       0.02197795, 0.00956475, 0.01464489, 0.02953646, 0.01453599,
+       0.01453599, 0.01678401, 0.01455868, 0.01453599, 0.01960464,
+       0.01453599, 0.01455868, 0.01453599, 0.03152251, 0.02107603,
+       0.0210062 , 0.01504404, 0.02563977, 0.01957346, 0.02628854,
+       0.02459016, 0.03715809, 0.07169323, 0.10091918])
+</pre></div>
+</div>
+</div>
+</div>
+<p>The algorithms we used above get very similar answers to the version implemented in <code class="docutils literal notranslate"><span class="pre">networkx</span></code>. There are a couple of parameters (max iterations, stopping tolerance, initial distribution) which can affect the results slightly.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pagerank_dict</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">pagerank</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="n">pagerank_dict</span><span class="o">.</span><span class="n">get</span><span class="p">)(</span><span class="n">nodelist</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([0.09700182, 0.05287839, 0.05707842, 0.03586064, 0.02197941,
+       0.02911334, 0.02911334, 0.02449076, 0.02976534, 0.01430895,
+       0.02197941, 0.00956492, 0.01464519, 0.02953631, 0.01453516,
+       0.01453516, 0.01678538, 0.01455886, 0.01453516, 0.01960442,
+       0.01453516, 0.01455886, 0.01453516, 0.03152092, 0.02107546,
+       0.02100563, 0.0150434 , 0.0256388 , 0.01957296, 0.02628726,
+       0.02458934, 0.03715664, 0.07169213, 0.10091792])
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="betweenness-centrality">
+<h2>Betweenness centrality<a class="headerlink" href="#betweenness-centrality" title="Permalink to this headline">#</a></h2>
+<section id="shortest-paths">
+<h3>Shortest paths<a class="headerlink" href="#shortest-paths" title="Permalink to this headline">#</a></h3>
+<figure class="align-default" id="id2">
+<img alt="_images/shortest-paths.png" src="_images/shortest-paths.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 3 </span><span class="caption-text">Illustration of a shortest path between two nodes. Image from <a class="reference external" href="https://www.sci.unich.it/~francesc/teaching/network/geodesic.html">Shortest paths</a>.</span><a class="headerlink" href="#id2" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+<p>Rather than considering random walks, <strong>betweenness centrality</strong> is based on <strong>shortest paths</strong>. A shortest path between node <span class="math notranslate nohighlight">\(i\)</span> and node <span class="math notranslate nohighlight">\(j\)</span> is a path (a sequence of edges to traverse) which uses as few edges as possible to get from <span class="math notranslate nohighlight">\(i\)</span> to <span class="math notranslate nohighlight">\(j\)</span>. If you’d like to compute shortest paths with a sparse adjacency matrix, you can do this in <code class="docutils literal notranslate"><span class="pre">scipy</span></code> using <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csgraph.shortest_path.html"><code class="docutils literal notranslate"><span class="pre">scipy.sparse.csgraph.shortest_path</span></code></a>. In <code class="docutils literal notranslate"><span class="pre">networkx</span></code>, you can use <a class="reference external" href="https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.shortest_paths.generic.shortest_path.html#networkx.algorithms.shortest_paths.generic.shortest_path"><code class="docutils literal notranslate"><span class="pre">shortest_path</span></code></a> and several other similar functions.</p>
+</section>
+<section id="motivating-betweenness-centrality">
+<h3>Motivating betweenness centrality<a class="headerlink" href="#motivating-betweenness-centrality" title="Permalink to this headline">#</a></h3>
+<p>Betweenness centrality uses the following motivation: imaging we have a network where every pair of nodes needs to exchange information. Further, we assume that each node is equally efficient at transmitting information, and that information will flow between pairs of nodes using the shortest path.</p>
+<p>Betweenness centrality, then, is based on the following simple logic: a node is more important if more information passes through them. In other words, the betweenness centrality of node <span class="math notranslate nohighlight">\(i\)</span> is proportional to the number of these shortest paths (among all other nodes) which contain <span class="math notranslate nohighlight">\(i\)</span>.</p>
+<p>Let’s say that <span class="math notranslate nohighlight">\(n^{i}_{st}\)</span> is an indicator, where it is 1 if node <span class="math notranslate nohighlight">\(i\)</span> is on the shortest path from <span class="math notranslate nohighlight">\(s\)</span> to <span class="math notranslate nohighlight">\(t\)</span> and 0 otherwise.</p>
+<p>We can then write the betweenness centrality of node <span class="math notranslate nohighlight">\(i\)</span>, <span class="math notranslate nohighlight">\(x_i\)</span>, as</p>
+<div class="math notranslate nohighlight">
+\[x_i = \sum_{s,t} n_{st}^i\]</div>
+<p>There are a few modifications which are usually made to the formula above - for instance, if there are multiple shortest paths between <span class="math notranslate nohighlight">\(s\)</span> and <span class="math notranslate nohighlight">\(t\)</span>, we would divide <span class="math notranslate nohighlight">\(n_{st}^i\)</span> by how many paths there are, <span class="math notranslate nohighlight">\(g_{st}\)</span>. And, some will normalize the path count by the number of possible paths to make betweenness the fraction of paths running through that node. So, we end up with</p>
+<div class="math notranslate nohighlight">
+\[x_i = \frac{1}{n^2} \sum_{s,t} \frac{n^{i}_{st}}{g_{st}}\]</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+<span class="n">betweenness</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+
+<span class="n">all_paths</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">shortest_path</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">source_node</span><span class="p">,</span> <span class="n">path_collection</span> <span class="ow">in</span> <span class="n">all_paths</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">target_node</span><span class="p">,</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">path_collection</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">path</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span> <span class="c1"># ignore the start and end nodes themselves</span>
+            <span class="n">betweenness</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span><span class="o">/</span><span class="n">n</span><span class="o">**</span><span class="mi">2</span>
+
+<span class="n">betweenness</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([0.45934256, 0.02595156, 0.26816609, 0.        , 0.        ,
+       0.05190311, 0.0017301 , 0.        , 0.03979239, 0.        ,
+       0.        , 0.        , 0.        , 0.00692042, 0.        ,
+       0.        , 0.        , 0.        , 0.        , 0.        ,
+       0.        , 0.        , 0.        , 0.02768166, 0.0017301 ,
+       0.01384083, 0.        , 0.03373702, 0.        , 0.00692042,
+       0.        , 0.06747405, 0.23442907, 0.12716263])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">map_to_nodes</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">betweenness_centrality</span><span class="p">(</span><span class="n">g</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([0.43763528, 0.05393669, 0.14365681, 0.01190927, 0.00063131,
+       0.02998737, 0.02998737, 0.        , 0.05592683, 0.00084776,
+       0.00063131, 0.        , 0.        , 0.0458634 , 0.        ,
+       0.        , 0.        , 0.        , 0.        , 0.03247505,
+       0.        , 0.        , 0.        , 0.01761364, 0.0022096 ,
+       0.00384049, 0.        , 0.02233345, 0.00179473, 0.00292208,
+       0.01441198, 0.13827561, 0.14524711, 0.30407498])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>My simple implementation does not properly deal with the case where there is
+more than one shortest path between two nodes, and <code class="docutils literal notranslate"><span class="pre">networkx</span></code> also uses a slightly different
+normalization constant than I did. I believe these two factors cause the slight difference
+in results.</p>
+</div>
+</section>
+</section>
+<section id="comparing-the-centrality-measures">
+<h2>Comparing the centrality measures<a class="headerlink" href="#comparing-the-centrality-measures" title="Permalink to this headline">#</a></h2>
+<p>Let’s compare how these different notions of centrality look on this network.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">graspologic.plot</span> <span class="kn">import</span> <span class="n">networkplot</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">colors</span>
+
+<span class="n">node_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">g</span><span class="o">.</span><span class="n">nodes</span><span class="p">())</span>
+<span class="n">node_data</span><span class="p">[</span><span class="s2">&quot;degree&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node_data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">degree</span><span class="p">(</span><span class="n">g</span><span class="p">)))</span>
+<span class="n">node_data</span><span class="p">[</span><span class="s2">&quot;eigenvector&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node_data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">eigenvector_centrality</span><span class="p">(</span><span class="n">g</span><span class="p">))</span>
+<span class="n">node_data</span><span class="p">[</span><span class="s2">&quot;pagerank&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node_data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">pagerank</span><span class="p">(</span><span class="n">g</span><span class="p">))</span>
+<span class="n">node_data</span><span class="p">[</span><span class="s2">&quot;betweenness&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node_data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">betweenness_centrality</span><span class="p">(</span><span class="n">g</span><span class="p">))</span>
+
+<span class="n">pos</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">kamada_kawai_layout</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+<span class="n">node_data</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">pos</span><span class="p">[</span><span class="n">node</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">node_data</span><span class="o">.</span><span class="n">index</span><span class="p">]</span>
+<span class="n">node_data</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">pos</span><span class="p">[</span><span class="n">node</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">node_data</span><span class="o">.</span><span class="n">index</span><span class="p">]</span>
+
+<span class="n">sns</span><span class="o">.</span><span class="n">set_context</span><span class="p">(</span><span class="s2">&quot;talk&quot;</span><span class="p">,</span> <span class="n">font_scale</span><span class="o">=</span><span class="mf">1.5</span><span class="p">)</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">plot_node_scaled_network</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">node_data</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">ax</span><span class="p">):</span>
+    <span class="c1"># REF: https://github.com/mwaskom/seaborn/blob/9425588d3498755abd93960df4ab05ec1a8de3ef/seaborn/_core.py#L215</span>
+
+    <span class="n">levels</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">node_data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()))</span>
+    <span class="n">cmap</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">color_palette</span><span class="p">(</span><span class="s2">&quot;Blues&quot;</span><span class="p">,</span> <span class="n">as_cmap</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">vmin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">levels</span><span class="p">)</span>
+    <span class="n">norm</span> <span class="o">=</span> <span class="n">colors</span><span class="o">.</span><span class="n">Normalize</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="mf">0.3</span> <span class="o">*</span> <span class="n">vmin</span><span class="p">)</span>
+    <span class="n">palette</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">levels</span><span class="p">,</span> <span class="n">cmap</span><span class="p">(</span><span class="n">norm</span><span class="p">(</span><span class="n">levels</span><span class="p">))))</span>
+
+    <span class="n">networkplot</span><span class="p">(</span>
+        <span class="n">A</span><span class="p">,</span>
+        <span class="n">node_data</span><span class="o">=</span><span class="n">node_data</span><span class="p">,</span>
+        <span class="n">x</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span>
+        <span class="n">y</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">,</span>
+        <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+        <span class="n">edge_linewidth</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">node_size</span><span class="o">=</span><span class="n">key</span><span class="p">,</span>
+        <span class="n">node_hue</span><span class="o">=</span><span class="n">key</span><span class="p">,</span>
+        <span class="n">palette</span><span class="o">=</span><span class="n">palette</span><span class="p">,</span>
+        <span class="n">node_sizes</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">200</span><span class="p">),</span>
+        <span class="n">node_kws</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">),</span>
+        <span class="n">node_alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">edge_kws</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">sns</span><span class="o">.</span><span class="n">color_palette</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="p">)</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">capitalize</span><span class="p">())</span>
+
+
+<span class="n">ax</span> <span class="o">=</span> <span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">plot_node_scaled_network</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">node_data</span><span class="p">,</span> <span class="s2">&quot;degree&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="p">)</span>
+
+<span class="n">ax</span> <span class="o">=</span> <span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">plot_node_scaled_network</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">node_data</span><span class="p">,</span> <span class="s2">&quot;eigenvector&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="p">)</span>
+
+<span class="n">ax</span> <span class="o">=</span> <span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">plot_node_scaled_network</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">node_data</span><span class="p">,</span> <span class="s2">&quot;pagerank&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="p">)</span>
+
+<span class="n">ax</span> <span class="o">=</span> <span class="n">axs</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+<span class="n">plot_node_scaled_network</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">node_data</span><span class="p">,</span> <span class="s2">&quot;betweenness&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/centrality_33_0.png" src="_images/centrality_33_0.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">node_data</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>degree</th>
+      <th>eigenvector</th>
+      <th>pagerank</th>
+      <th>betweenness</th>
+      <th>x</th>
+      <th>y</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>16</td>
+      <td>0.355483</td>
+      <td>0.097002</td>
+      <td>0.437635</td>
+      <td>0.025953</td>
+      <td>0.332618</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>9</td>
+      <td>0.265954</td>
+      <td>0.052878</td>
+      <td>0.053937</td>
+      <td>-0.154154</td>
+      <td>0.251060</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>10</td>
+      <td>0.317189</td>
+      <td>0.057078</td>
+      <td>0.143657</td>
+      <td>0.072811</td>
+      <td>-0.003398</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>6</td>
+      <td>0.211174</td>
+      <td>0.035861</td>
+      <td>0.011909</td>
+      <td>0.151208</td>
+      <td>0.232506</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>3</td>
+      <td>0.075966</td>
+      <td>0.021979</td>
+      <td>0.000631</td>
+      <td>0.193135</td>
+      <td>0.574454</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>4</td>
+      <td>0.079481</td>
+      <td>0.029113</td>
+      <td>0.029987</td>
+      <td>0.189964</td>
+      <td>0.679017</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>4</td>
+      <td>0.079481</td>
+      <td>0.029113</td>
+      <td>0.029987</td>
+      <td>-0.004422</td>
+      <td>0.691958</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>4</td>
+      <td>0.170955</td>
+      <td>0.024491</td>
+      <td>0.000000</td>
+      <td>0.283520</td>
+      <td>0.210236</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>5</td>
+      <td>0.227405</td>
+      <td>0.029765</td>
+      <td>0.055927</td>
+      <td>-0.175658</td>
+      <td>-0.009901</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>2</td>
+      <td>0.102675</td>
+      <td>0.014309</td>
+      <td>0.000848</td>
+      <td>0.070613</td>
+      <td>-0.289252</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>3</td>
+      <td>0.075966</td>
+      <td>0.021979</td>
+      <td>0.000631</td>
+      <td>0.379808</td>
+      <td>0.532623</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>1</td>
+      <td>0.052854</td>
+      <td>0.009565</td>
+      <td>0.000000</td>
+      <td>-0.187765</td>
+      <td>0.633252</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>2</td>
+      <td>0.084252</td>
+      <td>0.014645</td>
+      <td>0.000000</td>
+      <td>0.433744</td>
+      <td>0.379505</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>5</td>
+      <td>0.226470</td>
+      <td>0.029536</td>
+      <td>0.045863</td>
+      <td>-0.085120</td>
+      <td>0.052682</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>2</td>
+      <td>0.101406</td>
+      <td>0.014535</td>
+      <td>0.000000</td>
+      <td>-0.500067</td>
+      <td>-0.312444</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>2</td>
+      <td>0.101406</td>
+      <td>0.014535</td>
+      <td>0.000000</td>
+      <td>-0.465779</td>
+      <td>-0.429025</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>2</td>
+      <td>0.023635</td>
+      <td>0.016785</td>
+      <td>0.000000</td>
+      <td>0.159578</td>
+      <td>1.000000</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>2</td>
+      <td>0.092397</td>
+      <td>0.014559</td>
+      <td>0.000000</td>
+      <td>-0.279331</td>
+      <td>0.514205</td>
+    </tr>
+    <tr>
+      <th>18</th>
+      <td>2</td>
+      <td>0.101406</td>
+      <td>0.014535</td>
+      <td>0.000000</td>
+      <td>-0.395900</td>
+      <td>-0.534397</td>
+    </tr>
+    <tr>
+      <th>19</th>
+      <td>3</td>
+      <td>0.147911</td>
+      <td>0.019604</td>
+      <td>0.032475</td>
+      <td>-0.275385</td>
+      <td>0.069220</td>
+    </tr>
+    <tr>
+      <th>20</th>
+      <td>2</td>
+      <td>0.101406</td>
+      <td>0.014535</td>
+      <td>0.000000</td>
+      <td>-0.293375</td>
+      <td>-0.615543</td>
+    </tr>
+    <tr>
+      <th>21</th>
+      <td>2</td>
+      <td>0.092397</td>
+      <td>0.014559</td>
+      <td>0.000000</td>
+      <td>-0.373191</td>
+      <td>0.436351</td>
+    </tr>
+    <tr>
+      <th>22</th>
+      <td>2</td>
+      <td>0.101406</td>
+      <td>0.014535</td>
+      <td>0.000000</td>
+      <td>-0.158642</td>
+      <td>-0.642802</td>
+    </tr>
+    <tr>
+      <th>23</th>
+      <td>5</td>
+      <td>0.150123</td>
+      <td>0.031521</td>
+      <td>0.017614</td>
+      <td>0.236065</td>
+      <td>-0.515501</td>
+    </tr>
+    <tr>
+      <th>24</th>
+      <td>3</td>
+      <td>0.057054</td>
+      <td>0.021075</td>
+      <td>0.002210</td>
+      <td>0.570081</td>
+      <td>-0.296654</td>
+    </tr>
+    <tr>
+      <th>25</th>
+      <td>3</td>
+      <td>0.059208</td>
+      <td>0.021006</td>
+      <td>0.003840</td>
+      <td>0.548790</td>
+      <td>-0.166394</td>
+    </tr>
+    <tr>
+      <th>26</th>
+      <td>2</td>
+      <td>0.075582</td>
+      <td>0.015043</td>
+      <td>0.000000</td>
+      <td>-0.047563</td>
+      <td>-0.757920</td>
+    </tr>
+    <tr>
+      <th>27</th>
+      <td>4</td>
+      <td>0.133479</td>
+      <td>0.025639</td>
+      <td>0.022333</td>
+      <td>0.284627</td>
+      <td>-0.289822</td>
+    </tr>
+    <tr>
+      <th>28</th>
+      <td>3</td>
+      <td>0.131079</td>
+      <td>0.019573</td>
+      <td>0.001795</td>
+      <td>0.185397</td>
+      <td>-0.292763</td>
+    </tr>
+    <tr>
+      <th>29</th>
+      <td>4</td>
+      <td>0.134965</td>
+      <td>0.026287</td>
+      <td>0.002922</td>
+      <td>0.068520</td>
+      <td>-0.620426</td>
+    </tr>
+    <tr>
+      <th>30</th>
+      <td>4</td>
+      <td>0.174760</td>
+      <td>0.024589</td>
+      <td>0.014412</td>
+      <td>-0.381375</td>
+      <td>-0.089401</td>
+    </tr>
+    <tr>
+      <th>31</th>
+      <td>6</td>
+      <td>0.191036</td>
+      <td>0.037157</td>
+      <td>0.138276</td>
+      <td>0.197179</td>
+      <td>-0.072189</td>
+    </tr>
+    <tr>
+      <th>32</th>
+      <td>12</td>
+      <td>0.308651</td>
+      <td>0.071692</td>
+      <td>0.145247</td>
+      <td>-0.172313</td>
+      <td>-0.312215</td>
+    </tr>
+    <tr>
+      <th>33</th>
+      <td>17</td>
+      <td>0.373371</td>
+      <td>0.100918</td>
+      <td>0.304075</td>
+      <td>-0.100954</td>
+      <td>-0.339640</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>We can look at how correlated each of these measures are, but keep in mind, this may look very different on
+different networks!</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sns</span><span class="o">.</span><span class="n">pairplot</span><span class="p">(</span><span class="n">node_data</span><span class="p">,</span> <span class="nb">vars</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;degree&#39;</span><span class="p">,</span> <span class="s1">&#39;eigenvector&#39;</span><span class="p">,</span> <span class="s1">&#39;pagerank&#39;</span><span class="p">,</span> <span class="s1">&#39;betweenness&#39;</span><span class="p">],</span> <span class="n">height</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;seaborn.axisgrid.PairGrid at 0x143259b50&gt;
+</pre></div>
+</div>
+<img alt="_images/centrality_36_1.png" src="_images/centrality_36_1.png" />
+</div>
+</div>
+</section>
+<section id="final-note">
+<h2>Final note<a class="headerlink" href="#final-note" title="Permalink to this headline">#</a></h2>
+<p>Please keep in mind that there are many, many more notions of centrality that we didn’t
+go into here. More of these are described in Section 7.1 from Mark Newman’s “Networks”
+<span id="id3">[<a class="reference internal" href="community_detection.html#id43" title="Mark Newman. Networks. Oxford university press, 2018.">1</a>]</span>, as well as the <a class="reference external" href="https://networkx.org/documentation/stable/reference/algorithms/centrality.html"><code class="docutils literal notranslate"><span class="pre">centrality</span></code> section in <code class="docutils literal notranslate"><span class="pre">networkx</span></code>’s documentation</a>.</p>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">#</a></h2>
+<div class="docutils container" id="id4">
+<dl class="citation">
+<dt class="label" id="id39"><span class="brackets">1</span><span class="fn-backref">(<a href="#id1">1</a>,<a href="#id3">2</a>)</span></dt>
+<dd><p>Mark Newman. <em>Networks</em>. Oxford university press, 2018.</p>
+</dd>
+</dl>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="connected_components.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">Connected components</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="random_graphs.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Random network models</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Benjamin D. Pedigo<br/>
+  
+      &copy; Copyright 2022.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>
